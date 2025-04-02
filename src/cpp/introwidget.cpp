@@ -5,6 +5,7 @@ IntroWidget::IntroWidget(QWidget* parent) : QWidget(parent), ui(new Ui::IntroFor
 
     //  Connections
     connect(ui->rule, &QPushButton::clicked, this, &IntroWidget::toRulePage);
+    connect(ui->startGame, &QPushButton::clicked, this, &IntroWidget::startGame);
 }
 
 IntroWidget::~IntroWidget(){delete ui;}

@@ -13,6 +13,7 @@ class IntroWidget : public QWidget{
         Ui::IntroForm* ui;
     signals:
         void toRulePage();
+        void startGame();
 };
 
 #endif
