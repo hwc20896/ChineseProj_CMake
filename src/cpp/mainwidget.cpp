@@ -14,19 +14,20 @@ MainWidget::MainWidget(QWidget* parent) : QStackedWidget(parent), intro(new Intr
     connect(intro, &IntroWidget::startGame, this, &MainWidget::startGame);
 
     //  Json parsing
-    if (QFile propertyFile("properties.json"); propertyFile.open(QIODevice::ReadOnly | QIODevice::Text)){
-        auto doc = QJsonDocument::fromJson(propertyFile.readAll());
-        propertyFile.close();
+    if (QFile configFile("appconfig.json"); configFile.open(QIODevice::ReadOnly | QIODevice::Text) && QFile::exists("questionlist.json") && QFile::exists("questionconfig.json")) {
+        auto doc = QJsonDocument::fromJson(configFile.readAll());
+        configFile.close();
         assert(doc.isObject());
         auto object = doc.object();
 
         //  Applying json configs
         this->appTitle  = object["app_title"].toString("某游戲");
         this->gameTitle = object["game_title"].toString("游戲標題");
-        this->isMuted   = object["default_muted"].toBool(true);
+        this->isMuted   = object["default_background_mute"].toBool(true);
         
         this->setWindowTitle(this->appTitle);
     }
+    else intro->disable();
 }
 
 MainWidget::~MainWidget(){

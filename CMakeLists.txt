@@ -16,17 +16,23 @@ qt_add_executable(ChineseProj_CMake
     src/cpp/mainwidget.cpp
     src/cpp/introwidget.cpp
     src/cpp/rulewidget.cpp
+    src/cpp/template.cpp
+    src/cpp/managementwidget.cpp
 
     #  headers
     src/header/mainwidget.h
     src/header/introwidget.h
     src/header/rulewidget.h
+    src/header/template.h
+    src/header/managementwidget.h
 
     #  UIs
     src/ui/introwidget.ui
     src/ui/rulewidget.ui
+    src/ui/managementwidget.ui
 
     #  QRCs
+    resources.qrc
 )
 
 set_target_properties(ChineseProj_CMake PROPERTIES

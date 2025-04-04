@@ -7,11 +7,11 @@
 #include "introwidget.h"
 #include "rulewidget.h"
 
-class MainWidget : public QStackedWidget{
+class MainWidget final : public QStackedWidget{
     Q_OBJECT
     public:
         explicit MainWidget(QWidget* parent = nullptr);
-        virtual ~MainWidget();
+        ~MainWidget() override;
     private:
         IntroWidget* intro;
         RuleWidget* rule;

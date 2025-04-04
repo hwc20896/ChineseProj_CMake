@@ -1,14 +1,13 @@
 #pragma once
 #ifndef RULEWIDGET_H
 #define RULEWIDGET_H
-#include <QWidget>
 #include "ui_rulewidget.h"
 
-class RuleWidget : public QWidget{
+class RuleWidget final : public QWidget{
     Q_OBJECT
     public:
         explicit RuleWidget(QWidget* parent = nullptr);
-        virtual ~RuleWidget();
+        ~RuleWidget() override;
     private:
         Ui::RuleForm* ui;
     signals:
