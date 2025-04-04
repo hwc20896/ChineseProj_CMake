@@ -114,13 +114,12 @@
     </layout>
    </item>
    <item>
-    <widget class="QWidget" name="questionContainer" native="true">
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>350</height>
-      </size>
+    <widget class="QStackedWidget" name="stackedWidget">
+     <property name="currentIndex">
+      <number>0</number>
      </property>
+     <widget class="QWidget" name="page"/>
+     <widget class="QWidget" name="page_2"/>
     </widget>
    </item>
    <item>
@@ -174,6 +173,9 @@
      </item>
      <item>
       <widget class="QPushButton" name="nextPage">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="minimumSize">
         <size>
          <width>180</width>

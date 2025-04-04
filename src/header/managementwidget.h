@@ -3,16 +3,16 @@
 #define MANAGEMENTWIDGET_H
 #include "template.h"
 #include "ui_managementwidget.h"
-#include <chrono>
-#include <vector>
 #include <QAudioOutput>
 #include <QMediaPlayer>
+#include <chrono>
+#include <vector>
 using namespace std::chrono;
 
 class ManagementWidget final : public QWidget {
     Q_OBJECT
     public:
-        explicit ManagementWidget(bool currentMuted, QWidget *parent = nullptr);
+        explicit ManagementWidget(int mode, bool currentMuted, QWidget *parent = nullptr);
         ~ManagementWidget() override;
     private:
         Ui::ManagementWidget* m_ui;
@@ -35,6 +35,16 @@ class ManagementWidget final : public QWidget {
         //  BGM
         QMediaPlayer* player;
         QAudioOutput* output;
+
+        //  Game config
+        int64_t displayQuantity;
+        bool isHardMode;
+
+        //  Hard mode
+        int64_t countdownTime;
+
+        //  Game status
+        int correctCount, incorrectCount;
     signals:
         void finish();
 };

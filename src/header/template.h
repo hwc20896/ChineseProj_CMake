@@ -33,7 +33,7 @@ struct QuestionData{
 class QuestionWidget final : public QWidget{
     Q_OBJECT
     public:
-        explicit QuestionWidget(QuestionData question, QWidget* parent = nullptr);
+        explicit QuestionWidget(QuestionData question, int index, QWidget* parent = nullptr);
         ~QuestionWidget() override;
 
         static QString getStyleFromURI(const QString& uri);

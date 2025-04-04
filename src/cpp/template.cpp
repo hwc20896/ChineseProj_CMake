@@ -8,21 +8,21 @@
 #include <QStyle>
 #include <QFile>
 
-#define __REFRESH(button)\
+#define REFRESH(button)\
 this->style()->unpolish(button);\
 this->style()->polish(button)
 
-#define __SET_PROPERTY(button, value)\
+#define SET_PROPERTY(button, value)\
 button->setProperty("answer_status",value);\
-__REFRESH(button)
+REFRESH(button)
 
-#define __SET_CHOSEN(button) __SET_PROPERTY(button,"chosen")
+#define SET_CHOSEN(button) SET_PROPERTY(button,"chosen")
 
-#define __SET_CORRECT(button) __SET_PROPERTY(button,"correct")
+#define SET_CORRECT(button) SET_PROPERTY(button,"correct")
 
-#define __SET_INCORRECT(button) __SET_PROPERTY(button,"incorrect")
+#define SET_INCORRECT(button) SET_PROPERTY(button,"incorrect")
 
-QuestionWidget::QuestionWidget(QuestionData question, QWidget* parent) : QWidget(parent), m_question(std::move(question)), m_ui(new Ui::QuestionWidget){
+QuestionWidget::QuestionWidget(QuestionData question, int index, QWidget* parent) : QWidget(parent), m_question(std::move(question)), m_ui(new Ui::QuestionWidget){
     m_ui->setupUi();
     answered = false;
     correctText = m_question.options[m_question.corrOption];
@@ -34,7 +34,7 @@ QuestionWidget::QuestionWidget(QuestionData question, QWidget* parent) : QWidget
         textToButton.insert({text, button});
         button->show();
         button->setText(text);
-        connect(button, &QPushButton::clicked, this, &QuestionWidget::answerButtonClicked);
+        connect(button, &QPushButton::clicked, this, [this, button] {answerButtonClicked(button);});
     }
 
     //  Sound Effects
@@ -50,18 +50,18 @@ void QuestionWidget::answerButtonClicked(QPushButton* targetButton) {
     if (!answered) {
         answered = true;
         emit timeTap();
-        __SET_CHOSEN(targetButton);
+        SET_CHOSEN(targetButton);
         const bool corr = targetButton->text() == this->correctText;
         if (corr) {
-            __SET_CORRECT(targetButton);
+            SET_CORRECT(targetButton);
             correctSound->play();
         }
         else {
-            __SET_INCORRECT(targetButton);
+            SET_INCORRECT(targetButton);
             incorrectSound->play();
             cooldown(500);
             const auto corrButton = textToButton[correctText];
-            __SET_CORRECT(corrButton);
+            SET_CORRECT(corrButton);
         }
         cooldown(700);
         emit score(corr);
