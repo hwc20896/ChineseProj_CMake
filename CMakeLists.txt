@@ -18,6 +18,7 @@ qt_add_executable(ChineseProj_CMake
     src/cpp/rulewidget.cpp
     src/cpp/template.cpp
     src/cpp/managementwidget.cpp
+    src/cpp/outrowidget.cpp
 
     #  headers
     src/header/mainwidget.h
@@ -25,12 +26,14 @@ qt_add_executable(ChineseProj_CMake
     src/header/rulewidget.h
     src/header/template.h
     src/header/managementwidget.h
+    src/header/outrowidget.h
 
     #  UIs
     src/ui/introwidget.ui
     src/ui/rulewidget.ui
     src/ui/managementwidget.ui
     src/header/questionwidget.h
+    src/ui/outrowidget.ui
 
     #  QRCs
     resources.qrc

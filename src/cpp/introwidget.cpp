@@ -6,7 +6,7 @@ IntroWidget::IntroWidget(QWidget* parent) : QWidget(parent), ui(new Ui::IntroFor
 
     //  Connections
     connect(ui->rule, &QPushButton::clicked, this, &IntroWidget::toRulePage);
-    connect(ui->startGame, &QPushButton::clicked, this, &IntroWidget::startGame);
+    connect(ui->startGame, &QPushButton::clicked, this, [this]{emit this->startGame(ui->chooser->currentIndex(), isMuted);});
 
     //  Mute switch icons
     muted.addFile(":/Drawables/drawables/mute.png");

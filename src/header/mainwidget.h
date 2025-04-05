@@ -6,6 +6,7 @@
 
 #include "introwidget.h"
 #include "rulewidget.h"
+#include "managementwidget.h"
 
 class MainWidget final : public QStackedWidget{
     Q_OBJECT
@@ -15,13 +16,16 @@ class MainWidget final : public QStackedWidget{
     private:
         IntroWidget* intro;
         RuleWidget* rule;
+        ManagementWidget* questionManagement;
 
         //  Game config variables
         QString appTitle;
         QString gameTitle;
         bool isMuted;
+
     private slots:
-        void startGame();
+        void startGame(int currentMode, bool isMuted);
+        void outroCall(const std::vector<int64_t> &timestamps, int gameMode, int correctCount, int totalCount);
 }; 
 
 #endif

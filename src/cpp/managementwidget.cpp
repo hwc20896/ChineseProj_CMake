@@ -10,7 +10,7 @@ ManagementWidget::ManagementWidget(const int mode, const bool currentMuted, QWid
     data = deserializeJson();
     assert(!data.empty());
     isMuted = currentMuted;
-    isHardMode = mode == 1;
+    currentGameMode = mode;
     correctCount = incorrectCount = 0;
     m_ui->setupUi(this);
 
@@ -43,7 +43,7 @@ ManagementWidget::ManagementWidget(const int mode, const bool currentMuted, QWid
 
         //  Time recorder for total time and time per question use
         connect(widget, &QuestionWidget::timeTap, this, [this] {
-            if (!isHardMode) {
+            if (currentGameMode != 1) {
                 end = high_resolution_clock::now();
                 timeStamps.push_back(duration_cast<milliseconds>(end - start).count());
             }
@@ -57,7 +57,7 @@ ManagementWidget::ManagementWidget(const int mode, const bool currentMuted, QWid
     }
 
     //  Enable timer in Hard Mode
-    m_ui->timeDisplay->setVisible(isHardMode);
+    m_ui->timeDisplay->setVisible(currentGameMode == 1);
 
     //  Previous Page button and Next Page button change
     connect(m_ui->stackedWidget, &QStackedWidget::currentChanged, this, [this](const int index) {
@@ -70,9 +70,9 @@ ManagementWidget::ManagementWidget(const int mode, const bool currentMuted, QWid
     connect(m_ui->nextPage, &QPushButton::clicked, this, [this] {
         if (m_ui->stackedWidget->currentIndex() < displayQuantity -1) {
             m_ui->stackedWidget->setCurrentIndex(m_ui->stackedWidget->currentIndex() + 1);
-            if (!isHardMode) start = high_resolution_clock::now();
+            if (currentGameMode != 1) start = high_resolution_clock::now();
         }
-        else emit finish();
+        else emit finish(this->timeStamps, currentGameMode, correctCount, displayQuantity);
     });
 
     //  Mute switch alternation
@@ -106,5 +106,30 @@ std::vector<QuestionData> ManagementWidget::deserializeJson() {
     }
     return result;
 }
+
+QString ManagementWidget::timeDisplay(const double duration) {
+    if (duration > 60000LL) {
+        const double remain = remainder(duration,60.0);
+        return QString("%1分%2秒").arg(floor(duration/60000LL)).arg(QString::number(remain<0?remain+60:remain,'g',3));
+    }
+    if (duration == 60000LL) return "1分鐘";
+    if (duration >= 0) return QString("%1秒").arg(QString::number(duration/1000.0,'g',3));
+    throw std::range_error("Invalid duration");
+}
+
+QString ManagementWidget::addColor(const int correctCount, const int total) {
+    const double rate = static_cast<double>(correctCount) / static_cast<double>(total) * 100;
+    /*  (80% ~ 100%] -> S
+     *  (55% ~ 80%] -> A
+     *  (30% ~ 55%] -> B
+     *  [0% ~ 30%] -> C
+     */
+    if (rate > 80 && rate <= 100) return QString(COLOR(%1,"#e0cf37")).arg(correctCount);
+    if (rate > 55 && rate <= 80) return QString(COLOR(%1,"#8a43c1")).arg(correctCount);
+    if (rate > 30 && rate <= 55) return QString(COLOR(%1,"#0ebd2f")).arg(correctCount);
+    if (rate >= 0 && rate <= 30) return QString(COLOR(%1,"#343bcd")).arg(correctCount);
+    throw std::range_error("Rate out of range: Pls Check");
+}
+
 
 

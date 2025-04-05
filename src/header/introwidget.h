@@ -19,7 +19,7 @@ class IntroWidget final : public QWidget{
         bool isMuted;
     signals:
         void toRulePage();
-        void startGame(bool isMuted);
+        void startGame(int currentMode, bool isMuted);
 };
 
 #endif

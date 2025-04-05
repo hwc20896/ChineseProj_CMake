@@ -9,11 +9,19 @@
 #include <vector>
 using namespace std::chrono;
 
+#define COLOR(target,color) "<font color="#color">"#target"</font>"
+
 class ManagementWidget final : public QWidget {
     Q_OBJECT
     public:
         explicit ManagementWidget(int mode, bool currentMuted, QWidget *parent = nullptr);
         ~ManagementWidget() override;
+
+        //  Time display function
+        static QString timeDisplay(double duration);
+
+        //  Add color
+        static QString addColor(int correctCount, int total);
     private:
         Ui::ManagementWidget* m_ui;
         std::vector<QuestionWidget*> pageWidget;
@@ -37,7 +45,7 @@ class ManagementWidget final : public QWidget {
 
         //  Game config
         int64_t displayQuantity;
-        bool isHardMode;
+        int currentGameMode;
 
         //  Hard mode
         int64_t countdownTime;
@@ -45,7 +53,7 @@ class ManagementWidget final : public QWidget {
         //  Game status
         int correctCount, incorrectCount;
     signals:
-        void finish();
+        void finish(std::vector<int64_t>& timestamps, int currentGameMode, int correctCount, int totalCount);
 };
 
 #endif

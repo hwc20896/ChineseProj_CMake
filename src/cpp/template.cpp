@@ -1,12 +1,12 @@
 #include "template.h"
 
-#include <ranges>
-#include <random>
-#include <QSoundEffect>
 #include <QEventLoop>
-#include <QTimer>
-#include <QStyle>
 #include <QFile>
+#include <QSoundEffect>
+#include <QStyle>
+#include <QTimer>
+#include <random>
+#include <ranges>
 
 #define REFRESH(button)\
 this->style()->unpolish(button);\
