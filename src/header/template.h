@@ -5,6 +5,7 @@
 #include "questionwidget.h"
 #include <map>
 #include <QSoundEffect>
+#include <utility>
 
 struct QuestionData{
     QString title;
@@ -23,8 +24,8 @@ struct QuestionData{
     */
     int difficulty;
 
-    explicit QuestionData(const QString& title, const QStringList& options, int corroption, const QString& description = {}, const QString& hint = {}, const int difficulty = 0)
-        : title(title), options(options), corrOption(corroption), description(description), hint(hint), difficulty(difficulty){}
+    explicit QuestionData(QString  title, QStringList  options, int corroption, QString  description = {}, QString  hint = {}, const int difficulty = 0)
+        : title(std::move(title)), options(std::move(options)), corrOption(corroption), description(std::move(description)), hint(std::move(hint)), difficulty(difficulty){}
     explicit QuestionData(const QJsonObject& object)
         : title(object["title"].toString()), options(object["options"].toVariant().toStringList()), corrOption(object["corroption"].toInt()),
           description(object["description"].toString()), hint(object["hint"].toString()), difficulty(object["difficulty"].toInt()){}

@@ -8,7 +8,7 @@
 
 ManagementWidget::ManagementWidget(const int mode, const bool currentMuted, QWidget* parent) : QWidget(parent), m_ui(new Ui::ManagementWidget) {
     data = deserializeJson();
-    assert(data.size() > 0);
+    assert(!data.empty());
     isMuted = currentMuted;
     isHardMode = mode == 1;
     correctCount = incorrectCount = 0;
@@ -20,7 +20,7 @@ ManagementWidget::ManagementWidget(const int mode, const bool currentMuted, QWid
     player = new QMediaPlayer();
     player->setAudioOutput(output);
     player->setSource({"qrc:/BGM/medias/OMFG_Pizza.mp3"});
-    connect(player, &QMediaPlayer::mediaStatus, this, [this](const QMediaPlayer::MediaStatus status) {
+    connect(player, &QMediaPlayer::mediaStatusChanged, this, [this](const QMediaPlayer::MediaStatus status) {
         if (status == QMediaPlayer::LoadedMedia) player->play();
     });
 
@@ -44,7 +44,7 @@ ManagementWidget::ManagementWidget(const int mode, const bool currentMuted, QWid
         //  Time recorder for total time and time per question use
         connect(widget, &QuestionWidget::timeTap, this, [this] {
             if (!isHardMode) {
-                end = clock.now();
+                end = high_resolution_clock::now();
                 timeStamps.push_back(duration_cast<milliseconds>(end - start).count());
             }
         });
@@ -55,6 +55,9 @@ ManagementWidget::ManagementWidget(const int mode, const bool currentMuted, QWid
             m_ui->nextPage->setEnabled(true);
         });
     }
+
+    //  Enable timer in Hard Mode
+    m_ui->timeDisplay->setVisible(isHardMode);
 
     //  Previous Page button and Next Page button change
     connect(m_ui->stackedWidget, &QStackedWidget::currentChanged, this, [this](const int index) {
@@ -67,7 +70,7 @@ ManagementWidget::ManagementWidget(const int mode, const bool currentMuted, QWid
     connect(m_ui->nextPage, &QPushButton::clicked, this, [this] {
         if (m_ui->stackedWidget->currentIndex() < displayQuantity -1) {
             m_ui->stackedWidget->setCurrentIndex(m_ui->stackedWidget->currentIndex() + 1);
-            if (!isHardMode) start = clock.now();
+            if (!isHardMode) start = high_resolution_clock::now();
         }
         else emit finish();
     });
@@ -80,6 +83,8 @@ ManagementWidget::ManagementWidget(const int mode, const bool currentMuted, QWid
         output->setMuted(isMuted);
         m_ui->muteSwitch->setIcon(isMuted? muted: unmuted);
     });
+
+    start = high_resolution_clock::now();
 }
 
 ManagementWidget::~ManagementWidget() { delete m_ui; }

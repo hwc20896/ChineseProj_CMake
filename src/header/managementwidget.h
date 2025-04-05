@@ -28,7 +28,6 @@ class ManagementWidget final : public QWidget {
         bool isMuted;
 
         //  Timer
-        high_resolution_clock clock;
         time_point<high_resolution_clock> start, end;
         std::vector<int64_t> timeStamps;
 

@@ -30,9 +30,13 @@ qt_add_executable(ChineseProj_CMake
     src/ui/introwidget.ui
     src/ui/rulewidget.ui
     src/ui/managementwidget.ui
+    src/header/questionwidget.h
 
     #  QRCs
     resources.qrc
+
+    #  CSSs
+    src/css/regular.css
 )
 
 set_target_properties(ChineseProj_CMake PROPERTIES
