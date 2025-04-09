@@ -11,6 +11,7 @@ class IntroWidget final : public QWidget{
         explicit IntroWidget(QWidget* parent = nullptr);
         ~IntroWidget() override;
         void disable() const;
+        void enable(const QString& appTitle, const QString& tick) const;
     private:
         Ui::IntroForm* ui;
 

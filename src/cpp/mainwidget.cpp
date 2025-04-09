@@ -17,7 +17,7 @@ MainWidget::MainWidget(QWidget* parent) : QStackedWidget(parent), intro(new Intr
     connect(intro, &IntroWidget::startGame, this, &MainWidget::startGame);
 
     //  Json parsing
-    if (QFile configFile("appconfig.json"); configFile.open(QIODevice::ReadOnly | QIODevice::Text) && QFile::exists("questionlist.json") && QFile::exists("questionconfig.json")) {
+    if (QFile configFile("appconfig.json"); configFile.open(QIODevice::ReadOnly | QIODevice::Text) && QFile::exists("questionlist.json")) {
         const auto doc = QJsonDocument::fromJson(configFile.readAll());
         configFile.close();
         assert(doc.isObject());
@@ -27,8 +27,11 @@ MainWidget::MainWidget(QWidget* parent) : QStackedWidget(parent), intro(new Intr
         this->appTitle  = object["app_title"].toString("某游戲");
         this->gameTitle = object["game_title"].toString("游戲標題");
         this->isMuted   = object["default_background_mute"].toBool(true);
+        this->displayQuantity = object["display_quantity"].toInt();
+        this->hardModeCountdownMS = object["hardmode_countdown_ms"].toInt();
         
         this->setWindowTitle(this->appTitle);
+        intro->enable(gameTitle, ManagementWidget::timeDisplay(hardModeCountdownMS));
     }
     else intro->disable();
 }

@@ -22,6 +22,8 @@ class MainWidget final : public QStackedWidget{
         QString appTitle;
         QString gameTitle;
         bool isMuted;
+        int displayQuantity;
+        int64_t hardModeCountdownMS;
 
     private slots:
         void startGame(int currentMode, bool isMuted);
