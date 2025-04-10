@@ -14,6 +14,9 @@ ManagementWidget::ManagementWidget(const int mode, const bool currentMuted, QWid
     correctCount = incorrectCount = 0;
     m_ui->setupUi(this);
 
+    m_ui->stackedWidget->removeWidget(m_ui->page);
+    m_ui->stackedWidget->removeWidget(m_ui->page_2);
+
     //  BGM
     output = new QAudioOutput();
     output->setVolume(.15);
@@ -56,6 +59,10 @@ ManagementWidget::ManagementWidget(const int mode, const bool currentMuted, QWid
         });
     }
 
+    //  Default
+    m_ui->stackedWidget->setCurrentIndex(0);
+    qDebug() << m_ui->stackedWidget->currentWidget();
+
     //  Enable timer in Hard Mode
     m_ui->timeDisplay->setVisible(currentGameMode == 1);
 
@@ -64,6 +71,7 @@ ManagementWidget::ManagementWidget(const int mode, const bool currentMuted, QWid
         if (index == 0) m_ui->prevPage->hide();
         if (index == displayQuantity - 1) m_ui->nextPage->setText("完成");
     });
+    m_ui->prevPage->hide();
 
     //  Navigations
     connect(m_ui->prevPage, &QPushButton::clicked, this, [this] {m_ui->stackedWidget->setCurrentIndex(m_ui->stackedWidget->currentIndex() - 1);});
