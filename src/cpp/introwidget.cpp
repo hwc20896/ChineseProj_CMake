@@ -16,6 +16,9 @@ IntroWidget::IntroWidget(QWidget* parent) : QWidget(parent), ui(new Ui::IntroFor
         isMuted = !isMuted;
         ui->muteSwitch->setIcon(isMuted ? muted : unmuted);
     });
+
+    //  Default
+    ui->muteSwitch->setIcon(unmuted);
 }
 
 IntroWidget::~IntroWidget(){delete ui;}
