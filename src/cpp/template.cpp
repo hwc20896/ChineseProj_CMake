@@ -7,6 +7,7 @@
 #include <QTimer>
 #include <random>
 #include <ranges>
+#include <QDebug>
 
 #define REFRESH(button)\
 this->style()->unpolish(button);\
@@ -22,14 +23,18 @@ REFRESH(button)
 
 #define SET_INCORRECT(button) SET_PROPERTY(button,"incorrect")
 
-QuestionWidget::QuestionWidget(QuestionData question, int index, QWidget* parent) : QWidget(parent), m_question(std::move(question)), m_ui(new Ui::QuestionWidget){
-    m_ui->setupUi();
+QuestionWidget::QuestionWidget(const QuestionData& question, const int index, QWidget* parent) : QWidget(parent), m_question(question), m_ui(new Ui::QuestionWidget){
+    m_ui->setupUi(this);
     answered = false;
     correctText = m_question.options[m_question.corrOption];
     std::ranges::shuffle(m_question.options, std::mt19937((std::random_device()())));
 
-    for (std::initializer_list buttons = {m_ui->optionA, m_ui->optionB, m_ui->optionC, m_ui->optionD};
-        auto [text, button] : std::ranges::zip_view(m_question.options,buttons)
+    m_ui->questionTitle->setText(QString("%1: %2").arg(index).arg(m_question.title));
+
+    auto buttons = {m_ui->optionA, m_ui->optionB, m_ui->optionC, m_ui->optionD};
+    for (const auto& button : buttons) {button->hide();}
+
+    for (auto [text, button] : std::ranges::zip_view(m_question.options,buttons)
     ) {
         textToButton.insert({text, button});
         button->show();
