@@ -50,6 +50,7 @@ void MainWidget::startGame(const int currentMode, const bool isMuted) {
     questionManagement = new ManagementWidget(currentMode, isMuted);
     this->close();
     questionManagement->show();
+    questionManagement->resize(this->size());
     connect(questionManagement, &ManagementWidget::finish, this, &MainWidget::outroCall);
 }
 
