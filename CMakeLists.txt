@@ -32,7 +32,7 @@ qt_add_executable(ChineseProj_CMake
     src/ui/introwidget.ui
     src/ui/rulewidget.ui
     src/ui/managementwidget.ui
-    src/header/questionwidget.h
+    src/ui/questionwidget.ui
     src/ui/outrowidget.ui
 
     #  QRCs
@@ -45,6 +45,7 @@ qt_add_executable(ChineseProj_CMake
 set_target_properties(ChineseProj_CMake PROPERTIES
     AUTOUIC ON
     AUTOUIC_SEARCH_PATHS ${CMAKE_CURRENT_SOURCE_DIR}/src/ui
+    AUTORCC ON
 )
 
 target_link_libraries(ChineseProj_CMake
