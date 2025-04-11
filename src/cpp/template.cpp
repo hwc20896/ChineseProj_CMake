@@ -29,7 +29,7 @@ QuestionWidget::QuestionWidget(const QuestionData& question, const int index, QW
     correctText = m_question.options[m_question.corrOption];
     std::ranges::shuffle(m_question.options, std::mt19937((std::random_device()())));
 
-    m_ui->questionTitle->setText(QString("%1: %2").arg(index).arg(m_question.title));
+    m_ui->questionTitle->setText(QString("%1: %2").arg(QString::number(index),m_question.title));
 
     auto buttons = {m_ui->optionA, m_ui->optionB, m_ui->optionC, m_ui->optionD};
     for (const auto& button : buttons) {button->hide();}

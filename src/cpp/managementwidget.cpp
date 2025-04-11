@@ -29,10 +29,10 @@ ManagementWidget::ManagementWidget(const int mode, const bool currentMuted, QWid
 
     //  Json file Read
     if (QFile configFile("questionconfig.json"); configFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        const auto gameConfig = QJsonDocument::fromJson(configFile.readAll());
+        const auto gameConfig = QJsonValue::fromJson(configFile.readAll());
         configFile.close();
         assert(gameConfig.isObject());
-        const auto config = gameConfig.object();
+        const auto config = gameConfig.toObject();
         countdownTime = config["hardmode_countdown_ms"].toInt();
         displayQuantity = config["display_quantity"].toInt();
     }
@@ -118,7 +118,7 @@ std::vector<QuestionData> ManagementWidget::deserializeJson() {
 QString ManagementWidget::timeDisplay(const double duration) {
     if (duration > 60000LL) {
         const double remain = remainder(duration,60.0);
-        return QString("%1分%2秒").arg(floor(duration/60000LL)).arg(QString::number(remain<0?remain+60:remain,'g',3));
+        return QString("%1分%2秒").arg(QString::number(std::floor(duration/60000LL)), QString::number(remain<0?remain+60:remain,'g',3));
     }
     if (duration == 60000LL) return "1分鐘";
     if (duration >= 0) return QString("%1秒").arg(QString::number(duration/1000.0,'g',3));
@@ -132,10 +132,10 @@ QString ManagementWidget::addColor(const int correctCount, const int total) {
      *  (30% ~ 55%] -> B
      *  [0% ~ 30%] -> C
      */
-    if (rate > 80 && rate <= 100) return QString(COLOR(%1,"#e0cf37")).arg(correctCount);
-    if (rate > 55 && rate <= 80) return QString(COLOR(%1,"#8a43c1")).arg(correctCount);
-    if (rate > 30 && rate <= 55) return QString(COLOR(%1,"#0ebd2f")).arg(correctCount);
-    if (rate >= 0 && rate <= 30) return QString(COLOR(%1,"#343bcd")).arg(correctCount);
+    if (rate > 80 && rate <= 100) return QString(COLOR(%1,"#e0cf37")).arg(QString::number(correctCount));
+    if (rate > 55 && rate <= 80) return QString(COLOR(%1,"#8a43c1")).arg(QString::number(correctCount));
+    if (rate > 30 && rate <= 55) return QString(COLOR(%1,"#0ebd2f")).arg(QString::number(correctCount));
+    if (rate >= 0 && rate <= 30) return QString(COLOR(%1,"#343bcd")).arg(QString::number(correctCount));
     throw std::range_error("Rate out of range: Pls Check");
 }
 
