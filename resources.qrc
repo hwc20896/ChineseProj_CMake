@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/Drawables">
+        <file>drawables/arrow_down.png</file>
+        <file>drawables/mute.png</file>
+        <file>drawables/unmute.png</file>
+    </qresource>
+    <qresource prefix="/BGM">
+        <file>medias/OMFG_Pizza.mp3</file>
+    </qresource>
+    <qresource prefix="/SoundEffects">
+        <file>medias/bingo.wav</file>
+        <file>medias/ohno.wav</file>
+    </qresource>
+</RCC>
