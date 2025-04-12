@@ -58,11 +58,13 @@ ManagementWidget::ManagementWidget(const int mode, const bool currentMuted, QWid
             isCorrect? correctCount++ : incorrectCount++;
             m_ui->nextPage->setEnabled(true);
             hasAnswered[currentIndex] = true;
+            updatePages();
         });
     }
 
     //  Default
     m_ui->stackedWidget->setCurrentIndex(0);
+    updatePages();
 
     //  Enable timer in Hard Mode
     m_ui->timeDisplay->setVisible(currentGameMode == 1);
@@ -82,7 +84,7 @@ ManagementWidget::ManagementWidget(const int mode, const bool currentMuted, QWid
             m_ui->stackedWidget->setCurrentIndex(m_ui->stackedWidget->currentIndex() + 1);
             if (currentGameMode != 1) start = high_resolution_clock::now();
         }
-        else emit finish(this->timeStamps, currentGameMode, correctCount, displayQuantity);
+        else emit finish(this->timeStamps, currentGameMode, correctCount, displayQuantity, isMuted);
     });
 
     //  Mute switch alternation
@@ -107,6 +109,7 @@ ManagementWidget::ManagementWidget(const int mode, const bool currentMuted, QWid
 
 ManagementWidget::~ManagementWidget() {
     delete m_ui;
+    player->disconnect();
     player->stop();
 }
 
@@ -150,6 +153,19 @@ QString ManagementWidget::addColor(const int correctCount, const int total) {
     if (rate > 30 && rate <= 55) return QString(COLOR(%1,"#0ebd2f")).arg(QString::number(correctCount));
     if (rate >= 0 && rate <= 30) return QString(COLOR(%1,"#343bcd")).arg(QString::number(correctCount));
     throw std::range_error("Rate out of range: Pls Check");
+}
+
+void ManagementWidget::setScore(const int corr, const int inCorr) const {
+    m_ui->correctState->setText(QString(COLOR(錯誤數 %1,"#ff0000")" | " COLOR(%2 正確數,"#00dd12")).arg(QString::number(inCorr), QString::number(corr)));
+}
+
+void ManagementWidget::setProgress(const int currentProgress, const int total) const {
+    m_ui->progress->setText(QString("進度：%1 / %2 - %3%").arg(QString::number(currentProgress), QString::number(total), QString::number(currentProgress*100/total)));
+}
+
+void ManagementWidget::updatePages() const {
+    this->setScore(correctCount, incorrectCount);
+    this->setProgress(correctCount + incorrectCount, displayQuantity);
 }
 
 

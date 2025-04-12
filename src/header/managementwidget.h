@@ -29,6 +29,10 @@ class ManagementWidget final : public QWidget {
         static std::vector<QuestionData> getRandomOrder(std::vector<QuestionData> questions, int64_t quantity);
         std::vector<bool> hasAnswered;
 
+        void updatePages() const;
+        void setScore(int corr, int inCorr) const;
+        void setProgress(int currentProgress, int total) const;
+
         //  Parse Json
         static std::vector<QuestionData> deserializeJson();
 
@@ -54,7 +58,7 @@ class ManagementWidget final : public QWidget {
         //  Game status
         int correctCount, incorrectCount;
     signals:
-        void finish(std::vector<int64_t>& timestamps, int currentGameMode, int correctCount, int totalCount);
+        void finish(std::vector<int64_t>& timestamps, int currentGameMode, int correctCount, int totalCount, bool currentMuted);
 };
 
 #endif
