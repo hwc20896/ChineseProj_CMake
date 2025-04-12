@@ -1,5 +1,7 @@
 #include "introwidget.h"
+
 #include <QStringList>
+#include "template.h"
 
 IntroWidget::IntroWidget(QWidget* parent) : QWidget(parent), ui(new Ui::IntroForm){
     ui->setupUi(this);
@@ -19,6 +21,12 @@ IntroWidget::IntroWidget(QWidget* parent) : QWidget(parent), ui(new Ui::IntroFor
 
     //  Default
     ui->muteSwitch->setIcon(unmuted);
+
+    //  Styles
+    ui->muteSwitch->setObjectName("icon");
+    ui->startGame->setObjectName("navigator");
+    ui->rule->setObjectName("navigator");
+    this->setStyleSheet(QuestionWidget::getStyleFromURI(":/Stylesheets/src/css/regular.css"));
 }
 
 IntroWidget::~IntroWidget(){delete ui;}

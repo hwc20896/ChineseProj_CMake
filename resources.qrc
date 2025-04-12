@@ -11,4 +11,9 @@
         <file>medias/bingo.wav</file>
         <file>medias/ohno.wav</file>
     </qresource>
+    <qresource prefix="/Stylesheets">
+        <file>src/css/after_choose.css</file>
+        <file>src/css/before_choose.css</file>
+        <file>src/css/regular.css</file>
+    </qresource>
 </RCC>

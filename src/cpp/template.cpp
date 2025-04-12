@@ -32,7 +32,11 @@ QuestionWidget::QuestionWidget(const QuestionData& question, const int index, QW
     m_ui->questionTitle->setText(QString("%1: %2").arg(QString::number(index),m_question.title));
 
     auto buttons = {m_ui->optionA, m_ui->optionB, m_ui->optionC, m_ui->optionD};
-    for (const auto& button : buttons) {button->hide();}
+    for (const auto& button : buttons) {
+        button->hide();
+        button->setObjectName("option");
+        button->setProperty("answer_status","unselected");
+    }
 
     for (auto [text, button] : std::ranges::zip_view(m_question.options,buttons)) {
         textToButton.insert({text, button});
@@ -46,6 +50,9 @@ QuestionWidget::QuestionWidget(const QuestionData& question, const int index, QW
     correctSound->setSource({"qrc:/SoundEffects/medias/bingo.wav"});
     incorrectSound = new QSoundEffect;
     incorrectSound->setSource({"qrc:/SoundEffects/medias/ohno.wav"});
+
+    //  Styles
+    this->setStyleSheet(getStyleFromURI(":/Stylesheets/src/css/before_choose.css"));
 }
 
 QuestionWidget::~QuestionWidget(){delete m_ui;}
@@ -54,8 +61,10 @@ void QuestionWidget::answerButtonClicked(QPushButton* targetButton) {
     if (!answered) {
         answered = true;
         emit timeTap();
+        this->setStyleSheet(getStyleFromURI(":/Stylesheets/src/css/after_choose.css"));
         SET_CHOSEN(targetButton);
         const bool corr = targetButton->text() == this->correctText;
+        cooldown(800);
         if (corr) {
             SET_CORRECT(targetButton);
             correctSound->play();

@@ -40,6 +40,8 @@ qt_add_executable(ChineseProj_CMake
 
     #  CSSs
     src/css/regular.css
+    src/css/before_choose.css
+    src/css/after_choose.css
 )
 
 set_target_properties(ChineseProj_CMake PROPERTIES

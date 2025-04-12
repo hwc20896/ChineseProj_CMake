@@ -1,5 +1,6 @@
 #include "outrowidget.h"
 #include <QApplication>
+#include "template.h"
 
 OutroWidget::OutroWidget(QWidget *parent) : QWidget(parent), ui(new Ui::OutroWidget) {
     ui->setupUi(this);
@@ -19,6 +20,12 @@ OutroWidget::OutroWidget(QWidget *parent) : QWidget(parent), ui(new Ui::OutroWid
     connect(ui->replayButton, &QPushButton::clicked, this, [this] {
         emit replay(ui->featureBox->currentIndex(), isMuted);
     });
+
+    //  Styles
+    ui->replayButton->setObjectName("navigator");
+    ui->exitButton->setObjectName("navigator");
+    ui->muteSwitch->setObjectName("icon");
+    this->setStyleSheet(QuestionWidget::getStyleFromURI(":/Stylesheets/src/css/regular.css"));
 }
 
 OutroWidget::~OutroWidget() {delete ui;}

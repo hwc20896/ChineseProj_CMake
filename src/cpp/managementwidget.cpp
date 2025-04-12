@@ -63,7 +63,6 @@ ManagementWidget::ManagementWidget(const int mode, const bool currentMuted, QWid
 
     //  Default
     m_ui->stackedWidget->setCurrentIndex(0);
-    qDebug() << m_ui->stackedWidget->currentWidget();
 
     //  Enable timer in Hard Mode
     m_ui->timeDisplay->setVisible(currentGameMode == 1);
@@ -94,8 +93,16 @@ ManagementWidget::ManagementWidget(const int mode, const bool currentMuted, QWid
         output->setMuted(isMuted);
         m_ui->muteSwitch->setIcon(isMuted? muted: unmuted);
     });
+    m_ui->muteSwitch->setIcon(currentMuted? muted: unmuted);
+    output->setMuted(currentMuted);
 
     start = high_resolution_clock::now();
+
+    //  Styles
+    m_ui->muteSwitch->setObjectName("icon");
+    m_ui->nextPage->setObjectName("navigator");
+    m_ui->prevPage->setObjectName("navigator");
+    this->setStyleSheet(QuestionWidget::getStyleFromURI(":/Stylesheets/src/css/regular.css"));
 }
 
 ManagementWidget::~ManagementWidget() {
