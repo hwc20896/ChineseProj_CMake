@@ -27,6 +27,7 @@ class ManagementWidget final : public QWidget {
         std::vector<QuestionWidget*> pageWidget;
         std::vector<QuestionData> data;
         static std::vector<QuestionData> getRandomOrder(std::vector<QuestionData> questions, int64_t quantity);
+        std::vector<bool> hasAnswered;
 
         //  Parse Json
         static std::vector<QuestionData> deserializeJson();

@@ -12,6 +12,7 @@ ManagementWidget::ManagementWidget(const int mode, const bool currentMuted, QWid
     isMuted = currentMuted;
     currentGameMode = mode;
     correctCount = incorrectCount = 0;
+    hasAnswered = std::vector(data.size(), false);
     m_ui->setupUi(this);
 
     m_ui->stackedWidget->removeWidget(m_ui->page);
@@ -53,9 +54,10 @@ ManagementWidget::ManagementWidget(const int mode, const bool currentMuted, QWid
         });
 
         //  Score recorder
-        connect(widget, &QuestionWidget::score, this, [this](const bool isCorrect) {
+        connect(widget, &QuestionWidget::score, this, [this, currentIndex](const bool isCorrect) {
             isCorrect? correctCount++ : incorrectCount++;
             m_ui->nextPage->setEnabled(true);
+            hasAnswered[currentIndex] = true;
         });
     }
 
@@ -68,8 +70,9 @@ ManagementWidget::ManagementWidget(const int mode, const bool currentMuted, QWid
 
     //  Previous Page button and Next Page button change
     connect(m_ui->stackedWidget, &QStackedWidget::currentChanged, this, [this](const int index) {
-        if (index == 0) m_ui->prevPage->hide();
-        if (index == displayQuantity - 1) m_ui->nextPage->setText("完成");
+        m_ui->prevPage->setVisible(index != 0);
+        m_ui->nextPage->setText(index < displayQuantity - 1? "下一頁 →": "完成");
+        m_ui->nextPage->setEnabled(hasAnswered[index]);
     });
     m_ui->prevPage->hide();
 
@@ -95,7 +98,10 @@ ManagementWidget::ManagementWidget(const int mode, const bool currentMuted, QWid
     start = high_resolution_clock::now();
 }
 
-ManagementWidget::~ManagementWidget() { delete m_ui; }
+ManagementWidget::~ManagementWidget() {
+    delete m_ui;
+    player->stop();
+}
 
 std::vector<QuestionData> ManagementWidget::getRandomOrder(std::vector<QuestionData> questions, int64_t quantity) {
     std::ranges::shuffle(questions, std::mt19937(std::random_device()()));
@@ -105,12 +111,12 @@ std::vector<QuestionData> ManagementWidget::getRandomOrder(std::vector<QuestionD
 std::vector<QuestionData> ManagementWidget::deserializeJson() {
     std::vector<QuestionData> result;
     if (QFile questionDataFile("questionlist.json"); questionDataFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        const auto doc = QJsonDocument::fromJson(questionDataFile.readAll());
+        const auto doc = QJsonValue::fromJson(questionDataFile.readAll());
         questionDataFile.close();
         assert(doc.isArray());
-        std::ranges::for_each(doc.array(), [&result](const QJsonValue& value) {
-            result.emplace_back(value.toObject());
-        });
+        for (const auto& item : doc.toArray()) {
+            result.emplace_back(item.toObject());
+        }
     }
     return result;
 }
