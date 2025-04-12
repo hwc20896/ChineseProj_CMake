@@ -33,7 +33,7 @@ void OutroWidget::hideTime() const {
     ui->avgTime->hide();
 }
 void OutroWidget::setScore(const QString& correctText, const int totalCount, const double percentage) const {
-    ui->score->setText(QString("你的得分為：%1 / %2：%3%").arg(correctText).arg(totalCount).arg(percentage));
+    ui->score->setText(QString("你的得分為：%1 / %2：%3%").arg(correctText, QString::number(totalCount), QString::number(percentage)));
 }
 
 

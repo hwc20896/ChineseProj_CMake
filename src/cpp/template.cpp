@@ -34,8 +34,7 @@ QuestionWidget::QuestionWidget(const QuestionData& question, const int index, QW
     auto buttons = {m_ui->optionA, m_ui->optionB, m_ui->optionC, m_ui->optionD};
     for (const auto& button : buttons) {button->hide();}
 
-    for (auto [text, button] : std::ranges::zip_view(m_question.options,buttons)
-    ) {
+    for (auto [text, button] : std::ranges::zip_view(m_question.options,buttons)) {
         textToButton.insert({text, button});
         button->show();
         button->setText(text);
