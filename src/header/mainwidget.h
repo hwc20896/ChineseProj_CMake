@@ -25,9 +25,11 @@ class MainWidget final : public QStackedWidget{
         int displayQuantity;
         int64_t hardModeCountdownMS;
 
+        int currentGameMode;
+
     private slots:
         void startGame(int currentMode, bool isMuted);
-        void outroCall(const std::vector<int64_t> &timestamps, int gameMode, int correctCount, int totalCount);
+        void outroCall(const std::vector<int64_t> &timestamps, int gameMode, int correctCount, int totalCount, bool currentMuted);
 }; 
 
 #endif

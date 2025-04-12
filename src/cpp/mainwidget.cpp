@@ -8,6 +8,7 @@ MainWidget::MainWidget(QWidget* parent) : QStackedWidget(parent), intro(new Intr
     this->addWidget(intro);
     this->addWidget(rule);
     this->setCurrentWidget(intro);
+    this->currentGameMode = 0;
 
     questionManagement = nullptr;
 
@@ -48,17 +49,20 @@ MainWidget::~MainWidget(){
  */
 void MainWidget::startGame(const int currentMode, const bool isMuted) {
     questionManagement = new ManagementWidget(currentMode, isMuted);
+    this->currentGameMode = currentMode;
     this->close();
     questionManagement->show();
     questionManagement->resize(this->size());
     connect(questionManagement, &ManagementWidget::finish, this, &MainWidget::outroCall);
 }
 
-void MainWidget::outroCall(const std::vector<int64_t>& timestamps, const int gameMode, const int correctCount, const int totalCount) {
+void MainWidget::outroCall(const std::vector<int64_t>& timestamps, const int gameMode, const int correctCount, const int totalCount, const bool currentMuted) {
     const auto outro = new OutroWidget;
+    outro->setMuteSwitchIcon(currentMuted);
 
     //  Score
-    outro->setScore(ManagementWidget::addColor(correctCount, totalCount),totalCount, static_cast<double>(correctCount)/static_cast<double>(totalCount)*100);
+    outro->setScore(ManagementWidget::addColor(correctCount, totalCount), totalCount, static_cast<double>(correctCount)/static_cast<double>(totalCount)*100);
+    outro->setGameMode(currentGameMode, ManagementWidget::timeDisplay(hardModeCountdownMS));
 
     //  Timer
     if (gameMode != 1) {
