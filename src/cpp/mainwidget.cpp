@@ -3,6 +3,7 @@
 #include <QFile>
 #include <QJsonDocument>
 #include <numeric>
+#include <QJsonArray>
 
 MainWidget::MainWidget(QWidget* parent) : QStackedWidget(parent), intro(new IntroWidget), rule(new RuleWidget){
     this->addWidget(intro);
@@ -33,6 +34,9 @@ MainWidget::MainWidget(QWidget* parent) : QStackedWidget(parent), intro(new Intr
         
         this->setWindowTitle(this->appTitle);
         intro->enable(gameTitle, ManagementWidget::timeDisplay(hardModeCountdownMS));
+
+        //  Rule
+        rule->setQuantity(getQuestionJsonSize(), displayQuantity);
     }
     else intro->disable();
 }
@@ -88,4 +92,13 @@ void MainWidget::outroCall(const int gameMode, const int correctCount, const int
 
     this->close();
     outro->show();
+}
+
+int MainWidget::getQuestionJsonSize() {
+    if (QFile questionJson("questionlist.json"); questionJson.open(QIODevice::ReadOnly | QIODevice::Text)){
+        const auto data = QJsonValue::fromJson(questionJson.readAll());
+        questionJson.close();
+        return data.isArray() ? data.toArray().size() : -1;
+    }
+    throw std::runtime_error("not found");
 }

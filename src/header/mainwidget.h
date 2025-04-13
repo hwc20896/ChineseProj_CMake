@@ -27,6 +27,8 @@ class MainWidget final : public QStackedWidget{
 
         int currentGameMode;
 
+        static int getQuestionJsonSize();
+
     private slots:
         void startGame(int currentMode, bool isMuted);
         void outroCall(int gameMode, int correctCount, int totalCount, bool currentMuted, const std::vector<int64_t>& timestamps);

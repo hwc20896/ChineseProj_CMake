@@ -8,6 +8,9 @@ class RuleWidget final : public QWidget{
     public:
         explicit RuleWidget(QWidget* parent = nullptr);
         ~RuleWidget() override;
+
+        //  Quantity display
+        void setQuantity(int quantity, int displayCount) const;
     private:
         Ui::RuleForm* ui;
     signals:
