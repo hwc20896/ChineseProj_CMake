@@ -59,6 +59,7 @@ void MainWidget::startGame(const int currentMode, const bool isMuted) {
 void MainWidget::outroCall(const int gameMode, const int correctCount, const int totalCount, const bool currentMuted, const std::vector<int64_t>& timestamps) {
     const auto outro = new OutroWidget;
     outro->setMuteSwitchIcon(currentMuted);
+    outro->resize(questionManagement->size());
 
     //  Score
     outro->setScore(ManagementWidget::addColor(correctCount, totalCount), totalCount, static_cast<double>(correctCount)/static_cast<double>(totalCount)*100);
@@ -78,7 +79,7 @@ void MainWidget::outroCall(const int gameMode, const int correctCount, const int
         this->currentGameMode = currentMode;
         outro->close();
         questionManagement->show();
-        questionManagement->resize(this->size());
+        questionManagement->resize(outro->size());
         connect(questionManagement, &ManagementWidget::finish, this, &MainWidget::outroCall);
     });
 
