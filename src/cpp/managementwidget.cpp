@@ -84,7 +84,7 @@ ManagementWidget::ManagementWidget(const int mode, const bool currentMuted, QWid
             m_ui->stackedWidget->setCurrentIndex(m_ui->stackedWidget->currentIndex() + 1);
             if (currentGameMode != 1) start = high_resolution_clock::now();
         }
-        else emit finish(this->timeStamps, currentGameMode, correctCount, displayQuantity, isMuted);
+        else emit finish(currentGameMode, correctCount, displayQuantity, isMuted, this->timeStamps);
     });
 
     //  Mute switch alternation
@@ -98,7 +98,20 @@ ManagementWidget::ManagementWidget(const int mode, const bool currentMuted, QWid
     m_ui->muteSwitch->setIcon(currentMuted? muted: unmuted);
     output->setMuted(currentMuted);
 
-    start = high_resolution_clock::now();
+    if (currentGameMode != 1) start = high_resolution_clock::now();
+    else {
+        timeLimit = countdownTime;
+        countdown = new QTimer;
+        tick = new QTimer;
+        connect(countdown, &QTimer::timeout, this, [this] {emit finish(currentGameMode,correctCount,displayQuantity,isMuted);});
+        connect(tick, &QTimer::timeout, this, [this] {
+            timeLimit -= 1000;
+            updateTime();
+        });
+        countdown->start(countdownTime);
+        tick->start(1000);
+        updateTime();
+    }
 
     //  Styles
     m_ui->muteSwitch->setObjectName("icon");
@@ -167,6 +180,17 @@ void ManagementWidget::updatePages() const {
     this->setScore(correctCount, incorrectCount);
     this->setProgress(correctCount + incorrectCount, displayQuantity);
 }
+
+void ManagementWidget::updateTime() const {
+    const int sec = timeLimit / 1000;
+    m_ui->timeDisplay->setText(
+        QString(sec >= 20 ? "剩餘時間: %1:%2" : "剩餘時間: " COLOR(%1,"#ff0000") " : " COLOR(%2,"#ff0000"))
+        .arg(QString::number(std::floor(timeLimit / countdownTime)),
+            sec%60 < 10 ? QString("0%1").arg(QString::number(sec%60)) : QString::number(sec%60)
+        )
+    );
+}
+
 
 
 

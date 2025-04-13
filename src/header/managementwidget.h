@@ -7,6 +7,7 @@
 #include <QMediaPlayer>
 #include <chrono>
 #include <vector>
+#include <QTimer>
 using namespace std::chrono;
 
 #define COLOR(target,color) "<font color="#color">"#target"</font>"
@@ -53,12 +54,14 @@ class ManagementWidget final : public QWidget {
         int currentGameMode;
 
         //  Hard mode
-        int64_t countdownTime;
+        int64_t countdownTime, timeLimit;
+        QTimer* countdown,* tick;
+        void updateTime() const;
 
         //  Game status
         int correctCount, incorrectCount;
     signals:
-        void finish(std::vector<int64_t>& timestamps, int currentGameMode, int correctCount, int totalCount, bool currentMuted);
+        void finish(int currentGameMode, int correctCount, int totalCount, bool currentMuted, const std::vector<int64_t>& timestamps = {});
 };
 
 #endif

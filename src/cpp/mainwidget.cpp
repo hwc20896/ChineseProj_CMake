@@ -56,7 +56,7 @@ void MainWidget::startGame(const int currentMode, const bool isMuted) {
     connect(questionManagement, &ManagementWidget::finish, this, &MainWidget::outroCall);
 }
 
-void MainWidget::outroCall(const std::vector<int64_t>& timestamps, const int gameMode, const int correctCount, const int totalCount, const bool currentMuted) {
+void MainWidget::outroCall(const int gameMode, const int correctCount, const int totalCount, const bool currentMuted, const std::vector<int64_t>& timestamps) {
     const auto outro = new OutroWidget;
     outro->setMuteSwitchIcon(currentMuted);
 

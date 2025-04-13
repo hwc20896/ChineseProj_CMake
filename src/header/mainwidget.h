@@ -29,7 +29,7 @@ class MainWidget final : public QStackedWidget{
 
     private slots:
         void startGame(int currentMode, bool isMuted);
-        void outroCall(const std::vector<int64_t> &timestamps, int gameMode, int correctCount, int totalCount, bool currentMuted);
+        void outroCall(int gameMode, int correctCount, int totalCount, bool currentMuted, const std::vector<int64_t>& timestamps);
 }; 
 
 #endif
