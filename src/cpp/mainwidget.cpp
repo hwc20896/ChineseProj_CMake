@@ -43,9 +43,9 @@ MainWidget::~MainWidget(){
 }
 
 /*  @param currentMode
- *      0 -> normal mode
- *      1 -> timed mode
- *  more mode coming soon...
+    0 -> normal mode
+    1 -> timed mode
+    more mode coming soon...
  */
 void MainWidget::startGame(const int currentMode, const bool isMuted) {
     questionManagement = new ManagementWidget(currentMode, isMuted);
@@ -72,7 +72,15 @@ void MainWidget::outroCall(const std::vector<int64_t>& timestamps, const int gam
     else {
         outro->hideTime();
     }
-    connect(outro, &OutroWidget::replay, this, &MainWidget::startGame);
+    connect(outro, &OutroWidget::replay, this, [this, outro](const int currentMode, const bool isMuted) {
+        //  Replay
+        questionManagement = new ManagementWidget(currentMode, isMuted);
+        this->currentGameMode = currentMode;
+        outro->close();
+        questionManagement->show();
+        questionManagement->resize(this->size());
+        connect(questionManagement, &ManagementWidget::finish, this, &MainWidget::outroCall);
+    });
 
     delete questionManagement;
     questionManagement = nullptr;

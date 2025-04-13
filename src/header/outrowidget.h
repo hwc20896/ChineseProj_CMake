@@ -13,7 +13,7 @@ class OutroWidget final : public QWidget {
         void setTimeDisplay(const QString& totalTime, const QString& avgTime) const;
         void hideTime() const;
         void setScore(const QString& correctText, int totalCount, double percentage) const;
-        void setMuteSwitchIcon(bool isMuted) const;
+        void setMuteSwitchIcon(bool isMuted);
         void setGameMode(int currentGameMode, const QString& tick) const;
     private:
         Ui::OutroWidget* ui;

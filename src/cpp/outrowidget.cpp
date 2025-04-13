@@ -43,8 +43,9 @@ void OutroWidget::setScore(const QString& correctText, const int totalCount, con
     ui->score->setText(QString("你的得分為：%1 / %2：%3%").arg(correctText, QString::number(totalCount), QString::number(percentage)));
 }
 
-void OutroWidget::setMuteSwitchIcon(const bool isMuted) const {
-    ui->muteSwitch->setIcon(isMuted ? unmuted : muted);
+void OutroWidget::setMuteSwitchIcon(const bool isMuted) {
+    this->isMuted = isMuted;
+    ui->muteSwitch->setIcon(isMuted ? muted: unmuted);
 }
 
 void OutroWidget::setGameMode(const int currentGameMode, const QString& tick) const {
