@@ -29,7 +29,7 @@ ManagementWidget::ManagementWidget(const int mode, const bool currentMuted, QWid
     });
 
     //  Json file Read
-    if (QFile configFile("questionconfig.json"); configFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+    if (QFile configFile("appconfig.json"); configFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
         const auto gameConfig = QJsonValue::fromJson(configFile.readAll());
         configFile.close();
         assert(gameConfig.isObject());
