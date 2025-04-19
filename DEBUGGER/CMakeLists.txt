@@ -8,8 +8,26 @@ qt_standard_project_setup()
 qt_add_executable(DEBUGGER
     WIN32 MACOSX_BUNDLE
     main.cpp
+
+    #  cpp
     src/cpp/widget.cpp
+
+    #  headers
     src/headers/widget.h
+
+    #  UIs
+    src/ui/main.ui
+    src/ui/questioncontainer.ui
+    src/ui/questionview.ui
+
+    #  QRCs
+
+)
+
+set_target_properties(DEBUGGER PROPERTIES
+    AUTOUIC ON
+    AUTOQRC ON
+    AUTOUIC_SEARCH_PATHS ${CMAKE_CURRENT_SOURCE_DIR}/src/ui
 )
 
 target_link_libraries(DEBUGGER

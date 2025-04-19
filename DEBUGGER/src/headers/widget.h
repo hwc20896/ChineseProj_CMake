@@ -1,8 +1,8 @@
 #pragma once
 #ifndef WIDGET_H
 #define WIDGET_H
-#include <QWidget>
 #include <QSqlQuery>
+#include "ui_main.h"
 
 class Widget final : public QWidget {
     Q_OBJECT
@@ -10,6 +10,8 @@ class Widget final : public QWidget {
         explicit Widget(const QSqlDatabase& database, QWidget* parent = nullptr);
         ~Widget() override;
     private:
+        Ui::mainForm* ui;
+
         QSqlDatabase m_database;
         QSqlQuery m_query;
 };
