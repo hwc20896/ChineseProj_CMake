@@ -11,9 +11,6 @@ class Widget final : public QWidget {
         ~Widget() override;
     private:
         Ui::mainForm* ui;
-
-        QSqlDatabase m_database;
-        QSqlQuery m_query;
 };
 
 #endif

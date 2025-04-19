@@ -11,9 +11,11 @@ qt_add_executable(DEBUGGER
 
     #  cpp
     src/cpp/widget.cpp
+    src/cpp/questioncontainer.cpp
 
     #  headers
     src/headers/widget.h
+    src/headers/questioncontainer.h
 
     #  UIs
     src/ui/main.ui
