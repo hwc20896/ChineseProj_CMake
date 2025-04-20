@@ -3,6 +3,8 @@ project(DEBUGGER LANGUAGES CXX)
 
 find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets Sql)
 
+set(CMAKE_CXX_STANDARD 23)
+
 qt_standard_project_setup()
 
 qt_add_executable(DEBUGGER
@@ -12,10 +14,12 @@ qt_add_executable(DEBUGGER
     #  cpp
     src/cpp/widget.cpp
     src/cpp/questioncontainer.cpp
+    src/cpp/viewer.cpp
 
     #  headers
     src/headers/widget.h
     src/headers/questioncontainer.h
+    src/headers/viewer.h
 
     #  UIs
     src/ui/main.ui
