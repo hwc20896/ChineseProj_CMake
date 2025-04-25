@@ -3,6 +3,7 @@
 #define VIEWER_H
 #include "ui_questionview.h"
 #include <QSqlQuery>
+#include <map>
 
 class Viewer final : public QWidget {
     Q_OBJECT
@@ -11,6 +12,8 @@ class Viewer final : public QWidget {
         ~Viewer() override;
     private:
         QSqlQuery m_query;
+        std::map<int, QPushButton*> index_to_button;
+        std::map<int, QString> difficulty_to_color;
 
         Ui::QuestionViewForm* ui;
 };
