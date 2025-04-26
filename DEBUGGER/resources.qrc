@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/drawables">
+        <file>src/drawables/arrow_down.png</file>
+    </qresource>
+    <qresource prefix="/styles">
+        <file>src/css/question.css</file>
+        <file>src/css/regular.css</file>
+    </qresource>
+</RCC>

@@ -10,6 +10,8 @@ class Viewer final : public QWidget {
     public:
         explicit Viewer(const QString& target, const QSqlDatabase& database, QWidget* parent = nullptr);
         ~Viewer() override;
+
+        static QString getStyle(const QString& uri);
     private:
         QSqlQuery m_query;
         std::map<int, QPushButton*> index_to_button;

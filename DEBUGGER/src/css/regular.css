@@ -1,0 +1,10 @@
+QPushButton#navigator{
+    background-color: #f0f0f0;
+    color: black;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+QPushButton#navigator:hover{
+    background-color: lightgray;
+}

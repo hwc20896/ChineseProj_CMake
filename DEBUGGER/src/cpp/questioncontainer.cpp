@@ -7,7 +7,7 @@ QuestionContainer::QuestionContainer(const QSqlDatabase& database, QWidget* pare
 
     ui->questionContainer->addItems(getQuestionList());
     connect(ui->questionContainer, &QListWidget::itemDoubleClicked, this,
-    [this, database](const QListWidgetItem *item) {
+        [this, database](const QListWidgetItem *item) {
             const auto viewer = new Viewer(item->text(), database);
             this->close();
             this->isMaximized()? viewer->showMaximized(): viewer->showNormal();

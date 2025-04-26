@@ -3,6 +3,7 @@
 #include <map>
 #include <array>
 #include <QPushButton>
+#include <QFile>
 
 Viewer::Viewer(const QString& target, const QSqlDatabase& database, QWidget* parent) : QWidget(parent), ui(new Ui::QuestionViewForm) {
     difficulty_to_color = {
@@ -27,15 +28,32 @@ Viewer::Viewer(const QString& target, const QSqlDatabase& database, QWidget* par
 
     //  Options
     constexpr auto indexes = std::views::iota(2,6);
-    for (const auto bind_buttons = {ui->optionA, ui->optionB, ui->optionC, ui->optionD};
-        auto [button, index] : std::views::zip(bind_buttons, indexes)
-    ) {
+    const std::array bind_buttons = {ui->optionA, ui->optionB, ui->optionC, ui->optionD};
+    for (auto [button, index] : std::views::zip(bind_buttons, indexes)) {
         index_to_button.emplace(index, button);
         const auto temp = m_query.value(index);
         temp.isNull()? button->hide() : button->setText(temp.toString());
+
+        //  Option style
+        button->setObjectName("option");
     }
+
+    //  Correct option display
+    const auto correct_index = m_query.value(6).toInt();
+    bind_buttons[correct_index]->setProperty("choice", "correct");
+
+    this->setStyleSheet(getStyle(":/styles/src/css/question.css"));
 }
 
 Viewer::~Viewer() {
     delete ui;
+}
+
+QString Viewer::getStyle(const QString& uri) {
+    if (QFile file(uri); file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        const auto style = file.readAll();
+        file.close();
+        return style;
+    }
+    return "";
 }

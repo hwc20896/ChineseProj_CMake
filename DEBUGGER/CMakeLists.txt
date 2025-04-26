@@ -27,12 +27,12 @@ qt_add_executable(DEBUGGER
     src/ui/questionview.ui
 
     #  QRCs
-
+    resources.qrc
 )
 
 set_target_properties(DEBUGGER PROPERTIES
     AUTOUIC ON
-    AUTOQRC ON
+    AUTORCC ON
     AUTOUIC_SEARCH_PATHS ${CMAKE_CURRENT_SOURCE_DIR}/src/ui
 )
 
