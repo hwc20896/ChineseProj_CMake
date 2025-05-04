@@ -29,7 +29,7 @@ class MainWidget final : public QStackedWidget{
 
         int currentGameMode;
 
-        static int getQuestionJsonSize();
+        int getQuestionSize();
 
     private slots:
         void startGame(int currentMode, bool isMuted);
