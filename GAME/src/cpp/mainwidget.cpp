@@ -5,7 +5,9 @@
 #include <numeric>
 #include <QJsonArray>
 
-MainWidget::MainWidget(QWidget* parent) : QStackedWidget(parent), intro(new IntroWidget), rule(new RuleWidget){
+MainWidget::MainWidget(const QSqlDatabase& database, QWidget* parent) : QStackedWidget(parent), intro(new IntroWidget), rule(new RuleWidget), m_database(database){
+    m_query = QSqlQuery(m_database);
+
     this->addWidget(intro);
     this->addWidget(rule);
     this->setCurrentWidget(intro);
@@ -44,6 +46,7 @@ MainWidget::MainWidget(QWidget* parent) : QStackedWidget(parent), intro(new Intr
 MainWidget::~MainWidget(){
     delete intro;
     delete rule;
+    m_database.close();
 }
 
 /*  @param currentMode

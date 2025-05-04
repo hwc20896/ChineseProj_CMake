@@ -1,8 +1,7 @@
 #pragma once
 #ifndef MAINWIDGET_H
 #define MAINWIDGET_H
-#include <QStackedWidget>
-#include <QString>
+#include <QSqlQuery>
 
 #include "introwidget.h"
 #include "rulewidget.h"
@@ -11,12 +10,15 @@
 class MainWidget final : public QStackedWidget{
     Q_OBJECT
     public:
-        explicit MainWidget(QWidget* parent = nullptr);
+        explicit MainWidget(const QSqlDatabase& database, QWidget* parent = nullptr);
         ~MainWidget() override;
     private:
         IntroWidget* intro;
         RuleWidget* rule;
         ManagementWidget* questionManagement;
+
+        QSqlDatabase m_database;
+        QSqlQuery m_query;
 
         //  Game config variables
         QString appTitle;
