@@ -32,7 +32,7 @@ MainWidget::MainWidget(const QSqlDatabase& database, QWidget* parent) : QStacked
         this->hardModeCountdownMS = m_query.value("HardmodeCountdown").toUInt();
 
         this->setWindowTitle(this->appTitle);
-        intro->enable(appTitle, ManagementWidget::timeDisplay(hardModeCountdownMS));
+        intro->enable(isMuted, appTitle, ManagementWidget::timeDisplay(hardModeCountdownMS));
 
         rule->setQuantity(getQuestionSize(), this->displayQuantity);
     }
