@@ -186,12 +186,12 @@ std::vector<QuestionData> ManagementWidget::getSQLQuestions() {
 
         //  Get question data
         const auto questionTitle = m_query.value("QuestionTitle").toString();
-        const QStringList options = {
-            m_query.value("Option1").toString(),
-            m_query.value("Option2").toString(),
-            m_query.value("Option3").toString(),
-            m_query.value("Option4").toString()
-        };
+        QStringList options;
+        for (const auto& element : {"Option1","Option2","Option3","Option4"}) {
+            if (const auto option = m_query.value(element); !option.isNull()) {
+                options.push_back(option.toString());
+            }
+        }
         const auto correctOption = m_query.value("CorrectOption").toInt(),
                    difficulty    = m_query.value("DIFFICULTY").toInt();
         const auto description      = m_query.value("Description").toString(),
