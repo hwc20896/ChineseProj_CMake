@@ -53,7 +53,7 @@ MainWidget::~MainWidget(){
     more mode coming soon...
  */
 void MainWidget::startGame(const int currentMode, const bool isMuted) {
-    questionManagement = new ManagementWidget(currentMode, isMuted);
+    questionManagement = new ManagementWidget(m_database, currentMode, isMuted);
     this->currentGameMode = currentMode;
     this->close();
     questionManagement->show();
@@ -80,7 +80,7 @@ void MainWidget::outroCall(const int gameMode, const int correctCount, const int
     }
     connect(outro, &OutroWidget::replay, this, [this, outro](const int currentMode, const bool isMuted) {
         //  Replay
-        questionManagement = new ManagementWidget(currentMode, isMuted);
+        questionManagement = new ManagementWidget(m_database, currentMode, isMuted);
         this->currentGameMode = currentMode;
         outro->close();
         questionManagement->show();
@@ -96,7 +96,7 @@ void MainWidget::outroCall(const int gameMode, const int correctCount, const int
 }
 
 int MainWidget::getQuestionSize(){
-    m_query.exec("SELECT COUNT(ID) FROM QuestionData");
+    m_query.exec("SELECT COUNT(*) FROM QuestionData");
     m_query.next();
     return m_query.value(0).toInt();
 }

@@ -24,11 +24,8 @@ struct QuestionData{
     */
     int difficulty;
 
-    explicit QuestionData(QString  title, QStringList options, int corroption, QString  description = {}, QString  hint = {}, const int difficulty = 0)
+    explicit QuestionData(QString title, QStringList options, int corroption, QString description = {}, QString hint = {}, const int difficulty = 0)
         : title(std::move(title)), options(std::move(options)), corrOption(corroption), description(std::move(description)), hint(std::move(hint)), difficulty(difficulty){}
-    explicit QuestionData(const QJsonObject& object)
-        : title(object["questiontitle"].toString()), options(object["options"].toVariant().toStringList()), corrOption(object["corroption"].toInt()),
-          description(object["description"].toString()), hint(object["hint"].toString()), difficulty(object["difficulty"].toInt()){}
 };
 
 class QuestionWidget final : public QWidget{
