@@ -178,7 +178,7 @@ std::vector<QuestionData> ManagementWidget::getSQLQuestions() {
     constexpr auto range = std::views::iota(1,101);
     std::vector<int> indexes(5);
     std::ranges::sample(range, indexes.begin(), 5, RANDOM_ALGORITHM);
-    for (auto&& i : indexes) {
+    for (const auto& i : indexes) {
         m_query.prepare("SELECT * FROM QuestionData WHERE ID = ?");
         m_query.addBindValue(i);
         m_query.exec();
