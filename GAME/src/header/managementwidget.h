@@ -8,14 +8,13 @@
 #include <chrono>
 #include <vector>
 #include <QTimer>
+#include <QSqlQuery>
 using namespace std::chrono;
-
-#define COLOR(target,color) "<font color="#color">"#target"</font>"
 
 class ManagementWidget final : public QWidget {
     Q_OBJECT
     public:
-        explicit ManagementWidget(int mode, bool currentMuted, QWidget *parent = nullptr);
+        explicit ManagementWidget(const QSqlDatabase& database, int mode, bool currentMuted, QWidget *parent = nullptr);
         ~ManagementWidget() override;
 
         //  Time display function
@@ -27,15 +26,11 @@ class ManagementWidget final : public QWidget {
         Ui::ManagementWidget* m_ui;
         std::vector<QuestionWidget*> pageWidget;
         std::vector<QuestionData> data;
-        static std::vector<QuestionData> getRandomOrder(std::vector<QuestionData> questions, int64_t quantity);
         std::vector<bool> hasAnswered;
 
         void updatePages() const;
         void setScore(int corr, int inCorr) const;
         void setProgress(int currentProgress, int total) const;
-
-        //  Parse Json
-        static std::vector<QuestionData> deserializeJson();
 
         //  Mute switch related
         QIcon muted, unmuted;
@@ -60,6 +55,11 @@ class ManagementWidget final : public QWidget {
 
         //  Game status
         int correctCount, incorrectCount;
+
+        //  SQL related
+        QSqlDatabase m_database;
+        QSqlQuery m_query;
+        std::vector<QuestionData> getSQLQuestions();
     signals:
         void finish(int currentGameMode, int correctCount, int totalCount, bool currentMuted, const std::vector<int64_t>& timestamps = {});
 };

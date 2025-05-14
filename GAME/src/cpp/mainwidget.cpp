@@ -1,11 +1,11 @@
 #include "mainwidget.h"
 #include "outrowidget.h"
 #include <QFile>
-#include <QJsonDocument>
 #include <numeric>
-#include <QJsonArray>
 
-MainWidget::MainWidget(QWidget* parent) : QStackedWidget(parent), intro(new IntroWidget), rule(new RuleWidget){
+MainWidget::MainWidget(const QSqlDatabase& database, QWidget* parent) : QStackedWidget(parent), intro(new IntroWidget), rule(new RuleWidget), m_database(database){
+    m_query = QSqlQuery(m_database);
+
     this->addWidget(intro);
     this->addWidget(rule);
     this->setCurrentWidget(intro);
@@ -18,32 +18,33 @@ MainWidget::MainWidget(QWidget* parent) : QStackedWidget(parent), intro(new Intr
     connect(rule, &RuleWidget::toIntroPage, this, [this]{this->setCurrentWidget(intro);});
     connect(intro, &IntroWidget::startGame, this, &MainWidget::startGame);
 
-    //  Json parsing
-    if (QFile configFile("appconfig.json"); configFile.open(QIODevice::ReadOnly | QIODevice::Text) && QFile::exists("questionlist.json")) {
-        const auto doc = QJsonDocument::fromJson(configFile.readAll());
-        configFile.close();
-        assert(doc.isObject());
-        auto object = doc.object();
+    //  SQL parsing
+    bool configParseSuccess = false;
 
-        //  Applying json configs
-        this->appTitle  = object["app_title"].toString("某游戲");
-        this->gameTitle = object["game_title"].toString("游戲標題");
-        this->isMuted   = object["default_background_mute"].toBool(true);
-        this->displayQuantity = object["display_quantity"].toInt();
-        this->hardModeCountdownMS = object["hardmode_countdown_ms"].toInt();
-        
+    m_query.exec("SELECT * FROM AppConfig");
+    if (m_query.next()) {
+        configParseSuccess = true;
+
+        this->appTitle  = m_query.value("AppTitle").toString();
+        this->gameTitle = m_query.value("GameTitle").toString();
+        this->isMuted   = m_query.value("DefaultBGMMute").toBool();
+        this->displayQuantity = m_query.value("DisplayQuantity").toInt();
+        this->hardModeCountdownMS = m_query.value("HardmodeCountdown").toUInt();
+
         this->setWindowTitle(this->appTitle);
-        intro->enable(gameTitle, ManagementWidget::timeDisplay(hardModeCountdownMS));
+        intro->enable(isMuted, appTitle, ManagementWidget::timeDisplay(hardModeCountdownMS));
 
-        //  Rule
-        rule->setQuantity(getQuestionJsonSize(), displayQuantity);
+        rule->setQuantity(getQuestionSize(), this->displayQuantity);
     }
-    else intro->disable();
+
+    m_query.exec("SELECT * FROM QuestionData");
+    if (!configParseSuccess || !m_query.next()) intro->disable();
 }
 
 MainWidget::~MainWidget(){
     delete intro;
     delete rule;
+    m_database.close();
 }
 
 /*  @param currentMode
@@ -52,7 +53,7 @@ MainWidget::~MainWidget(){
     more mode coming soon...
  */
 void MainWidget::startGame(const int currentMode, const bool isMuted) {
-    questionManagement = new ManagementWidget(currentMode, isMuted);
+    questionManagement = new ManagementWidget(m_database, currentMode, isMuted);
     this->currentGameMode = currentMode;
     this->close();
     questionManagement->show();
@@ -79,7 +80,7 @@ void MainWidget::outroCall(const int gameMode, const int correctCount, const int
     }
     connect(outro, &OutroWidget::replay, this, [this, outro](const int currentMode, const bool isMuted) {
         //  Replay
-        questionManagement = new ManagementWidget(currentMode, isMuted);
+        questionManagement = new ManagementWidget(m_database, currentMode, isMuted);
         this->currentGameMode = currentMode;
         outro->close();
         questionManagement->show();
@@ -94,11 +95,8 @@ void MainWidget::outroCall(const int gameMode, const int correctCount, const int
     outro->show();
 }
 
-int MainWidget::getQuestionJsonSize() {
-    if (QFile questionJson("questionlist.json"); questionJson.open(QIODevice::ReadOnly | QIODevice::Text)){
-        const auto data = QJsonValue::fromJson(questionJson.readAll());
-        questionJson.close();
-        return data.isArray() ? data.toArray().size() : -1;
-    }
-    throw std::runtime_error("not found");
+int MainWidget::getQuestionSize(){
+    m_query.exec("SELECT COUNT(*) FROM QuestionData");
+    m_query.next();
+    return m_query.value(0).toInt();
 }

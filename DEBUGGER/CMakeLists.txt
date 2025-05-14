@@ -15,16 +15,19 @@ qt_add_executable(DEBUGGER
     src/cpp/widget.cpp
     src/cpp/questioncontainer.cpp
     src/cpp/viewer.cpp
+    src/cpp/property.cpp
 
     #  headers
     src/headers/widget.h
     src/headers/questioncontainer.h
     src/headers/viewer.h
+    src/headers/property.h
 
     #  UIs
     src/ui/main.ui
     src/ui/questioncontainer.ui
     src/ui/questionview.ui
+    src/ui/property.ui
 
     #  QRCs
     resources.qrc
@@ -54,6 +57,7 @@ install(TARGETS DEBUGGER
 target_include_directories(DEBUGGER
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src/headers
+        ${CMAKE_CURRENT_BINARY_DIR}
 )
 
 qt_generate_deploy_app_script(

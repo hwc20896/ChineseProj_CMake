@@ -1,14 +1,17 @@
 #include "managementwidget.h"
 #include <QFile>
-#include <QJsonArray>
-#include <QJsonDocument>
 #include <algorithm>
 #include <random>
 #include <ranges>
 
-ManagementWidget::ManagementWidget(const int mode, const bool currentMuted, QWidget* parent) : QWidget(parent), m_ui(new Ui::ManagementWidget) {
-    data = deserializeJson();
-    assert(!data.empty());
+#define RANDOM_ALGORITHM std::mt19937(std::random_device()())
+
+ManagementWidget::ManagementWidget(const QSqlDatabase& database, const int mode, const bool currentMuted, QWidget* parent) : QWidget(parent), m_ui(new Ui::ManagementWidget), m_database(database) {
+    m_query.exec("SELECT DisplayQuantity FROM AppConfig");
+    m_query.next();
+    displayQuantity = m_query.value(0).toULongLong();
+
+    data = getSQLQuestions();
     isMuted = currentMuted;
     currentGameMode = mode;
     correctCount = incorrectCount = 0;
@@ -24,23 +27,18 @@ ManagementWidget::ManagementWidget(const int mode, const bool currentMuted, QWid
     player = new QMediaPlayer();
     player->setAudioOutput(output);
     player->setSource({"qrc:/BGM/medias/OMFG_Pizza.mp3"});
-    connect(player, &QMediaPlayer::mediaStatusChanged, this, [this](const QMediaPlayer::MediaStatus status) {
-        if (status == QMediaPlayer::LoadedMedia) player->play();
-    });
+    player->setLoops(QMediaPlayer::Loops::Infinite);
+    player->play();
+    connect(qApp, &QApplication::aboutToQuit, player, &QMediaPlayer::stop);
 
-    //  Json file Read
-    if (QFile configFile("appconfig.json"); configFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        const auto gameConfig = QJsonValue::fromJson(configFile.readAll());
-        configFile.close();
-        assert(gameConfig.isObject());
-        const auto config = gameConfig.toObject();
-        countdownTime = config["hardmode_countdown_ms"].toInt();
-        displayQuantity = config["display_quantity"].toInt();
-    }
+    //  SQL property read
+    m_query.exec("SELECT HardmodeCountdown, DisplayQuantity FROM AppConfig");
+    m_query.next();
+    countdownTime   = m_query.value(0).toULongLong();
 
     //  Question data insert to widget
     for (const auto indexes = std::views::iota(0, displayQuantity);
-         auto [currentIndex, currentData] : std::ranges::zip_view(indexes, getRandomOrder(data, displayQuantity))
+         auto [currentIndex, currentData] : std::ranges::zip_view(indexes, data)
     ) {
         const auto widget = new QuestionWidget(currentData, currentIndex+1);
         m_ui->stackedWidget->addWidget(widget);
@@ -124,24 +122,7 @@ ManagementWidget::~ManagementWidget() {
     delete m_ui;
     player->disconnect();
     player->stop();
-}
-
-std::vector<QuestionData> ManagementWidget::getRandomOrder(std::vector<QuestionData> questions, int64_t quantity) {
-    std::ranges::shuffle(questions, std::mt19937(std::random_device()()));
-    return {questions.begin(), questions.begin() + quantity};
-}
-
-std::vector<QuestionData> ManagementWidget::deserializeJson() {
-    std::vector<QuestionData> result;
-    if (QFile questionDataFile("questionlist.json"); questionDataFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        const auto doc = QJsonValue::fromJson(questionDataFile.readAll());
-        questionDataFile.close();
-        assert(doc.isArray());
-        for (const auto& item : doc.toArray()) {
-            result.emplace_back(item.toObject());
-        }
-    }
-    return result;
+    m_database.close();
 }
 
 QString ManagementWidget::timeDisplay(const double duration) {
@@ -190,6 +171,36 @@ void ManagementWidget::updateTime() const {
         )
     );
 }
+
+std::vector<QuestionData> ManagementWidget::getSQLQuestions() {
+    std::vector<QuestionData> output;
+    std::vector<int> idPool, sampled(displayQuantity);
+    m_query.exec(currentGameMode == 2? "SELECT ID FROM QuestionData WHERE DIFFICULTY = 0": "SELECT ID FROM QuestionData");
+    while (m_query.next()) idPool.push_back(m_query.value(0).toInt());
+    std::ranges::sample(idPool, sampled.begin(), displayQuantity, RANDOM_ALGORITHM);
+    for (const auto& i : sampled) {
+        m_query.prepare("SELECT * FROM QuestionData WHERE ID = ?");
+        m_query.addBindValue(i);
+        m_query.exec();
+        m_query.next();
+
+        //  Get question data
+        const auto questionTitle = m_query.value("QuestionTitle").toString();
+        QStringList options;
+        for (const auto& element : {"Option1","Option2","Option3","Option4"}) {
+            if (const auto option = m_query.value(element); !option.isNull()) {
+                options.push_back(option.toString());
+            }
+        }
+        const auto correctOption = m_query.value("CorrectOption").toInt(),
+                   difficulty    = m_query.value("DIFFICULTY").toInt();
+        const auto description      = m_query.value("Description").toString(),
+                   hint             = m_query.value("Hint").toString();
+        output.emplace_back(questionTitle, options, correctOption, description, hint, difficulty);
+    }
+    return output;
+}
+
 
 
 
