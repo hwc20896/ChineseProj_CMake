@@ -43,8 +43,16 @@ void IntroWidget::enable(const bool isMuted, const QString& appTitle, const QStr
     ui->gameTitle->setText(appTitle);
 
     //  Chooser
-    const QStringList gameMode = {"普通","限時"},
-                      modeExplanation = {"普通模式：不限時，結尾顯示答題時間及平均每題時間", QString("限時模式：限時%1，超時將強制跳轉至結束頁").arg(tick)};
+    const QStringList gameMode = {
+        "普通",
+        "限時",
+        "簡單"
+    },
+    modeExplanation = {
+        "普通模式：不限時，結尾顯示答題時間及平均每題時間",
+        QString("限時模式：限時%1，超時將強制跳轉至結束頁").arg(tick),
+        "簡單模式：僅有簡單題目，共有32題"
+    };
     ui->chooser->addItems(gameMode);
     ui->chooser->setCurrentIndex(0);
     connect(ui->chooser, &QComboBox::currentIndexChanged, this, [this, modeExplanation](const int index) {

@@ -1,7 +1,5 @@
 #include "managementwidget.h"
 #include <QFile>
-#include <QJsonArray>
-#include <QJsonDocument>
 #include <algorithm>
 #include <random>
 #include <ranges>
@@ -9,6 +7,10 @@
 #define RANDOM_ALGORITHM std::mt19937(std::random_device()())
 
 ManagementWidget::ManagementWidget(const QSqlDatabase& database, const int mode, const bool currentMuted, QWidget* parent) : QWidget(parent), m_ui(new Ui::ManagementWidget), m_database(database) {
+    m_query.exec("SELECT DisplayQuantity FROM AppConfig");
+    m_query.next();
+    displayQuantity = m_query.value(0).toULongLong();
+
     data = getSQLQuestions();
     isMuted = currentMuted;
     currentGameMode = mode;
@@ -25,15 +27,14 @@ ManagementWidget::ManagementWidget(const QSqlDatabase& database, const int mode,
     player = new QMediaPlayer();
     player->setAudioOutput(output);
     player->setSource({"qrc:/BGM/medias/OMFG_Pizza.mp3"});
-    connect(player, &QMediaPlayer::mediaStatusChanged, this, [this](const QMediaPlayer::MediaStatus status) {
-        if (status == QMediaPlayer::LoadedMedia) player->play();
-    });
+    player->setLoops(QMediaPlayer::Loops::Infinite);
+    player->play();
+    connect(qApp, &QApplication::aboutToQuit, player, &QMediaPlayer::stop);
 
     //  SQL property read
     m_query.exec("SELECT HardmodeCountdown, DisplayQuantity FROM AppConfig");
     m_query.next();
     countdownTime   = m_query.value(0).toULongLong();
-    displayQuantity = m_query.value(1).toULongLong();
 
     //  Question data insert to widget
     for (const auto indexes = std::views::iota(0, displayQuantity);
@@ -173,12 +174,11 @@ void ManagementWidget::updateTime() const {
 
 std::vector<QuestionData> ManagementWidget::getSQLQuestions() {
     std::vector<QuestionData> output;
-    m_query.exec("SELECT COUNT(*) FROM QuestionData");
-    m_query.next();
-    constexpr auto range = std::views::iota(1,101);
-    std::vector<int> indexes(5);
-    std::ranges::sample(range, indexes.begin(), 5, RANDOM_ALGORITHM);
-    for (const auto& i : indexes) {
+    std::vector<int> idPool, sampled(displayQuantity);
+    m_query.exec(currentGameMode == 2? "SELECT ID FROM QuestionData WHERE DIFFICULTY = 0": "SELECT ID FROM QuestionData");
+    while (m_query.next()) idPool.push_back(m_query.value(0).toInt());
+    std::ranges::sample(idPool, sampled.begin(), displayQuantity, RANDOM_ALGORITHM);
+    for (const auto& i : sampled) {
         m_query.prepare("SELECT * FROM QuestionData WHERE ID = ?");
         m_query.addBindValue(i);
         m_query.exec();
