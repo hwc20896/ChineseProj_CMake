@@ -29,7 +29,7 @@ QuestionWidget::QuestionWidget(const QuestionData& question, const int index, QW
     correctText = m_question.options[m_question.corrOption];
     std::ranges::shuffle(m_question.options, std::mt19937((std::random_device()())));
 
-    m_ui->questionTitle->setText(QString("%1: %2").arg(QString::number(index),m_question.title));
+    m_ui->questionTitle->setText(QString("%1 %2: %3").arg(getDifficultyText(),QString::number(index),m_question.title));
 
     const std::array buttons = {m_ui->optionA, m_ui->optionB, m_ui->optionC, m_ui->optionD};
     for (const auto& button : buttons) {
@@ -95,6 +95,24 @@ QString QuestionWidget::getStyleFromURI(const QString& uri) {
     }
     return "";
 }
+
+QString QuestionWidget::getDifficultyText() const {
+    switch (m_question.difficulty) {
+        case 0: {
+            return "[" COLOR(簡單,"#00ee00") "]";
+        }
+        case 1: {
+            return "[" COLOR(中等,"#d1d100") "]";
+        }
+        case 2: {
+            return "[" COLOR(困難,"#ee0000") "]";
+        }
+        default: {
+            return "[未知]";
+        }
+    }
+}
+
 
 
 

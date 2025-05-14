@@ -7,6 +7,8 @@
 #include <map>
 #include <utility>
 
+#define COLOR(target,color) "<font color="#color">"#target"</font>"
+
 struct QuestionData{
     QString title;
     QStringList options;
@@ -43,6 +45,7 @@ class QuestionWidget final : public QWidget{
         bool answered;
         QString correctText;
         std::map<QString, QPushButton*> textToButton;
+        QString getDifficultyText() const;
 
         //  Sound Effects
         QSoundEffect* correctSound,* incorrectSound;

@@ -11,8 +11,6 @@
 #include <QSqlQuery>
 using namespace std::chrono;
 
-#define COLOR(target,color) "<font color="#color">"#target"</font>"
-
 class ManagementWidget final : public QWidget {
     Q_OBJECT
     public:
