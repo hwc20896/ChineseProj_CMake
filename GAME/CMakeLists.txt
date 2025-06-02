@@ -19,6 +19,7 @@ qt_add_executable(ChineseProj_CMake
     src/cpp/template.cpp
     src/cpp/managementwidget.cpp
     src/cpp/outrowidget.cpp
+    src/cpp/gamemodechooser.cpp
 
     #  headers
     src/header/mainwidget.h
@@ -27,6 +28,7 @@ qt_add_executable(ChineseProj_CMake
     src/header/template.h
     src/header/managementwidget.h
     src/header/outrowidget.h
+    src/header/gamemodechooser.h
 
     #  UIs
     src/ui/introwidget.ui
@@ -34,6 +36,7 @@ qt_add_executable(ChineseProj_CMake
     src/ui/managementwidget.ui
     src/ui/questionwidget.ui
     src/ui/outrowidget.ui
+    src/ui/gamemodechooser.ui
 
     #  QRCs
     resources.qrc

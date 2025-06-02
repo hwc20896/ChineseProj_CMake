@@ -2,7 +2,7 @@
 #include <QApplication>
 #include "template.h"
 
-OutroWidget::OutroWidget(QWidget* parent) : QWidget(parent), ui(new Ui::OutroWidget) {
+OutroWidget::OutroWidget(const QString& tick, int gamemode, QWidget* parent) : QWidget(parent), ui(new Ui::OutroWidget) {
     ui->setupUi(this);
 
     //  Mute switch
@@ -16,9 +16,12 @@ OutroWidget::OutroWidget(QWidget* parent) : QWidget(parent), ui(new Ui::OutroWid
     //  Quit
     connect(ui->exitButton, &QPushButton::clicked, this, &QApplication::quit);
 
+    _chooser = new GamemodeChooser(tick, gamemode);
+    ui->mainLayout->insertWidget(2, _chooser);
+
     //  Replay
     connect(ui->replayButton, &QPushButton::clicked, this, [this] {
-        emit replay(ui->featureBox->currentIndex(), isMuted);
+        emit replay(_chooser->getMode(), isMuted);
     });
 
     //  Styles
@@ -28,7 +31,9 @@ OutroWidget::OutroWidget(QWidget* parent) : QWidget(parent), ui(new Ui::OutroWid
     this->setStyleSheet(QuestionWidget::getStyleFromURI(":/Stylesheets/src/css/regular.css"));
 }
 
-OutroWidget::~OutroWidget() {delete ui;}
+OutroWidget::~OutroWidget() {
+    delete ui;
+}
 
 void OutroWidget::setTimeDisplay(const QString& totalTime, const QString& avgTime) const {
     ui->totalTime->setText(QString("總答題時間：%1").arg(totalTime));
@@ -46,15 +51,4 @@ void OutroWidget::setScore(const QString& correctText, const int totalCount, con
 void OutroWidget::setMuteSwitchIcon(const bool isMuted) {
     this->isMuted = isMuted;
     ui->muteSwitch->setIcon(isMuted ? muted: unmuted);
-}
-
-void OutroWidget::setGameMode(const int currentGameMode, const QString& tick) const {
-    const QStringList gameModes = {"普通","限時"},
-                      modeExplanation = {"普通模式：不限時，結尾顯示答題時間及平均每題時間", QString("限時模式：限時%1，超時將強制跳轉至結束頁").arg(tick)};
-    ui->featureBox->addItems(gameModes);
-    ui->featureBox->setCurrentIndex(currentGameMode);
-    connect(ui->featureBox, &QComboBox::currentIndexChanged, this, [this, modeExplanation] (const int index) {
-        ui->gamemodeExplanation->setText(modeExplanation[index]);
-    });
-    ui->gamemodeExplanation->setText(modeExplanation[currentGameMode]);
 }

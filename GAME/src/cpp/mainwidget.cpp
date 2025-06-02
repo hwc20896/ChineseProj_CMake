@@ -3,20 +3,8 @@
 #include <QFile>
 #include <numeric>
 
-MainWidget::MainWidget(const QSqlDatabase& database, QWidget* parent) : QStackedWidget(parent), intro(new IntroWidget), rule(new RuleWidget), m_database(database){
+MainWidget::MainWidget(const QSqlDatabase& database, QWidget* parent) : QStackedWidget(parent), m_database(database){
     m_query = QSqlQuery(m_database);
-
-    this->addWidget(intro);
-    this->addWidget(rule);
-    this->setCurrentWidget(intro);
-    this->currentGameMode = 0;
-
-    questionManagement = nullptr;
-
-    //  Connections
-    connect(intro, &IntroWidget::toRulePage, this, [this]{this->setCurrentWidget(rule);});
-    connect(rule, &RuleWidget::toIntroPage, this, [this]{this->setCurrentWidget(intro);});
-    connect(intro, &IntroWidget::startGame, this, &MainWidget::startGame);
 
     //  SQL parsing
     bool configParseSuccess = false;
@@ -32,13 +20,27 @@ MainWidget::MainWidget(const QSqlDatabase& database, QWidget* parent) : QStacked
         this->hardModeCountdownMS = m_query.value("HardmodeCountdown").toUInt();
 
         this->setWindowTitle(this->appTitle);
-        intro->enable(isMuted, appTitle, ManagementWidget::timeDisplay(hardModeCountdownMS));
-
-        rule->setQuantity(getQuestionSize(), this->displayQuantity);
     }
 
+    intro = new IntroWidget(ManagementWidget::timeDisplay(hardModeCountdownMS));
+    rule  = new RuleWidget;
+
     m_query.exec("SELECT * FROM QuestionData");
-    if (!configParseSuccess || !m_query.next()) intro->disable();
+    if (!configParseSuccess || !m_query.next()) {
+        intro->disable();
+    }
+
+    this->addWidget(intro);
+    this->addWidget(rule);
+    this->setCurrentWidget(intro);
+    this->currentGameMode = 0;
+
+    questionManagement = nullptr;
+
+    //  Connections
+    connect(intro, &IntroWidget::toRulePage, this, [this]{this->setCurrentWidget(rule);});
+    connect(rule, &RuleWidget::toIntroPage, this, [this]{this->setCurrentWidget(intro);});
+    connect(intro, &IntroWidget::startGame, this, &MainWidget::startGame);
 }
 
 MainWidget::~MainWidget(){
@@ -62,13 +64,12 @@ void MainWidget::startGame(const int currentMode, const bool isMuted) {
 }
 
 void MainWidget::outroCall(const int gameMode, const int correctCount, const int totalCount, const bool currentMuted, const std::vector<int64_t>& timestamps) {
-    const auto outro = new OutroWidget;
+    const auto outro = new OutroWidget(ManagementWidget::timeDisplay(hardModeCountdownMS), gameMode);
     outro->setMuteSwitchIcon(currentMuted);
     outro->resize(questionManagement->size());
 
     //  Score
     outro->setScore(ManagementWidget::addColor(correctCount, totalCount), totalCount, static_cast<double>(correctCount)/static_cast<double>(totalCount)*100);
-    outro->setGameMode(currentGameMode, ManagementWidget::timeDisplay(hardModeCountdownMS));
 
     //  Timer
     if (gameMode != 1) {
