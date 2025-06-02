@@ -7,8 +7,11 @@
 #define RANDOM_ALGORITHM std::mt19937(std::random_device()())
 
 ManagementWidget::ManagementWidget(const QSqlDatabase& database, const int mode, const bool currentMuted, QWidget* parent) : QWidget(parent), m_ui(new Ui::ManagementWidget), m_database(database) {
+    if (!m_database.isOpen()) m_database.open();
+    m_query = QSqlQuery(m_database);
+
     m_query.exec("SELECT DisplayQuantity FROM AppConfig");
-    m_query.next();
+    bool debug = m_query.next();
     displayQuantity = m_query.value(0).toULongLong();
 
     data = getSQLQuestions();

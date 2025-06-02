@@ -29,6 +29,10 @@ MainWidget::MainWidget(const QSqlDatabase& database, QWidget* parent) : QStacked
     if (!configParseSuccess || !m_query.next()) {
         intro->disable();
     }
+    else {
+        rule->setQuantity(getQuestionSize(), displayQuantity);
+        intro->enable(isMuted, appTitle);
+    }
 
     this->addWidget(intro);
     this->addWidget(rule);
@@ -81,7 +85,7 @@ void MainWidget::outroCall(const int gameMode, const int correctCount, const int
     }
     connect(outro, &OutroWidget::replay, this, [this, outro](const int currentMode, const bool isMuted) {
         //  Replay
-        questionManagement = new ManagementWidget(m_database, currentMode, isMuted);
+        questionManagement = new ManagementWidget(this->m_database, currentMode, isMuted);
         this->currentGameMode = currentMode;
         outro->close();
         questionManagement->show();
