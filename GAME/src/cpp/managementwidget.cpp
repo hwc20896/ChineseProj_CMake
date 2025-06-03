@@ -11,7 +11,7 @@ ManagementWidget::ManagementWidget(const QSqlDatabase& database, const int mode,
     m_query = QSqlQuery(m_database);
 
     m_query.exec("SELECT DisplayQuantity FROM AppConfig");
-    bool debug = m_query.next();
+    m_query.next();
     displayQuantity = m_query.value(0).toULongLong();
 
     data = getSQLQuestions();

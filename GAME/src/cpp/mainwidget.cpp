@@ -8,6 +8,7 @@ MainWidget::MainWidget(const QSqlDatabase& database, QWidget* parent) : QStacked
 
     //  SQL parsing
     bool configParseSuccess = false;
+    isMuted = false;
 
     m_query.exec("SELECT * FROM AppConfig");
     if (m_query.next()) {
@@ -62,6 +63,7 @@ void MainWidget::startGame(const int currentMode, const bool isMuted) {
     questionManagement = new ManagementWidget(m_database, currentMode, isMuted);
     this->currentGameMode = currentMode;
     this->close();
+    questionManagement->setWindowTitle(appTitle);
     questionManagement->show();
     questionManagement->resize(this->size());
     connect(questionManagement, &ManagementWidget::finish, this, &MainWidget::outroCall);
@@ -88,6 +90,7 @@ void MainWidget::outroCall(const int gameMode, const int correctCount, const int
         questionManagement = new ManagementWidget(this->m_database, currentMode, isMuted);
         this->currentGameMode = currentMode;
         outro->close();
+        questionManagement->setWindowTitle(appTitle);
         questionManagement->show();
         questionManagement->resize(outro->size());
         connect(questionManagement, &ManagementWidget::finish, this, &MainWidget::outroCall);
